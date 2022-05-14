@@ -46,6 +46,14 @@ private:
     G4Material* Air;    // [yy]
     G4Material* Lead;    // [yy]
     G4Material* GAGG;   // [yy]
+    G4Material* Polyethene;
+    G4Material* Polystyrene;
+    G4Material* Water;
+    G4Material* Plexiglass;
+    G4Material* Teflon;
+    G4Material* Concrete;
+    G4Material* Aluminum;
+    G4Material* Iron;
 
     void DefineMaterials();
     muAnalyzer* analyzer;

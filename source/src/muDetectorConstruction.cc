@@ -236,18 +236,22 @@ G4VPhysicalVolume* muDetectorConstruction::Construct()
     */
 
   PerlinNoise pn(time(NULL));
-  double v;
-    const int RESOLUTION = 64;
+  int v;
+  const int RESOLUTION = 64;
 
                 // solid definition (size)
   G4Box* solidContBox =
     new G4Box("Contbox",
               cont_sizeX / (2 * RESOLUTION) * mm, cont_sizeY / (2 * RESOLUTION) * mm , cont_sizeZ / (2 * RESOLUTION) * mm);
     // logical volume definition (material)
-  G4LogicalVolume* logicContbox =
-      new G4LogicalVolume(solidContBox,          // its solid
-                          Lead,              // its material
-                          "Contbox");            // its name
+  G4Material* materials[] = {Air, Polyethene, Polystyrene, Water, Plexiglass, Teflon, Concrete, Aluminum, Iron, Lead};
+  G4LogicalVolume* logicalVolumes[10];
+  for (int i = 0; i < 10; i++){
+    logicalVolumes[i] =
+        new G4LogicalVolume(solidContBox,          // its solid
+                            materials[i],              // its material
+                            "Contbox");            // its name
+  }
 
   std::ifstream infile;
   infile.open(filename + ".voxel");
@@ -262,10 +266,12 @@ G4VPhysicalVolume* muDetectorConstruction::Construct()
               y = j / (double) RESOLUTION;
               z = k / (double) RESOLUTION;
                 infile >> v;
+                
                 if (v) {
+                  std::cout<< "kabir " << v << std::endl;
                     new G4PVPlacement(0,                        // no rotation
                                       G4ThreeVector((x-0.5) * cont_sizeX, (y-0.5) * cont_sizeY, (z-0.5) * cont_sizeZ),
-                                      logicContbox,            // its logical volume
+                                      logicalVolumes[v],            // its logical volume
                                       "ContboxAdd",               // its name
                                       logicModule,            // its mother  volume
                                       false,                  // no boolean operation
@@ -404,7 +410,16 @@ void muDetectorConstruction::DefineMaterials(){
 
 	Air = nistMan->FindOrBuildMaterial("G4_AIR");  // [yy] Air
 	EJ200 = nistMan->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE"); // [yy] Eljen, EJ200
-    Lead = nistMan->FindOrBuildMaterial("G4_Au"); // Actually uranium
+  Lead = nistMan->FindOrBuildMaterial("G4_Pb"); 
+  Polyethene = nistMan->FindOrBuildMaterial("G4_POLYETHYLENE");
+  Polystyrene = nistMan->FindOrBuildMaterial("G4_POLYSTYRENE");
+  Water = nistMan->FindOrBuildMaterial("G4_WATER");
+  Plexiglass = nistMan->FindOrBuildMaterial("G4_PLEXIGLASS");
+  Teflon = nistMan->FindOrBuildMaterial("G4_TEFLON");
+  Concrete = nistMan->FindOrBuildMaterial("G4_CONCRETE");
+  Aluminum = nistMan->FindOrBuildMaterial("G4_Al");
+  Iron = nistMan->FindOrBuildMaterial("G4_Fe");
+
 
 
 	GAGG = new G4Material("GAGG", density=6.63*g/cm3, 4); // [yy] GAGG scintillator (not used now)
